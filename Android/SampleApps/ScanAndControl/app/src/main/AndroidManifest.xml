@@ -23,6 +23,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ScanAndControlExample"
         tools:targetApi="31">
+
+        <service
+            android:name="com.unidice.sdk.internal.BLEService"
+            android:enabled="true"
+            android:exported="false"/>
+
         <activity
             android:name=".MainActivity"
             android:exported="true"

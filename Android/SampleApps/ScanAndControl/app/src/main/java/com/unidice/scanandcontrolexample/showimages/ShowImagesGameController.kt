@@ -20,6 +20,15 @@ class DiceImage(
 
 }
 
+// This is not part of the Unidice SDK.  It is a class which manages
+// which images we use in our game and several other game actions such
+// as pushing the images we desire to the unidice.
+//
+// No 'rolling rules' are pushed to the Unidice during this simple game. The effect
+// is that whatever rolling rules were already on the Unidice when this game was launched
+// will remain active.  How to set and control Rolling Rules is described in another example
+// mini game.
+//
 class ShowImagesGameController {
     private val TAG = "ShowImagesGameController"
 
@@ -61,12 +70,12 @@ class ShowImagesGameController {
         imageAdd(DiceImage( cyberrun_4_guid, "cyberrun_4.jpg",  AssetSpecialPurpose.NONE))
         imageAdd(DiceImage( cyberrun_5_guid, "cyberrun_5.jpg",  AssetSpecialPurpose.NONE))
 
-        imageAdd(DiceImage( dating_1_guid, "dating_1_guid.jpg",  AssetSpecialPurpose.NONE))
-        imageAdd(DiceImage( dating_2_guid, "dating_2_guid.jpg",  AssetSpecialPurpose.NONE))
-        imageAdd(DiceImage( dating_3_guid, "dating_3_guid.jpg",  AssetSpecialPurpose.NONE))
-        imageAdd(DiceImage( dating_4_guid, "dating_4_guid.jpg",  AssetSpecialPurpose.NONE))
-        imageAdd(DiceImage( dating_5_guid, "dating_5_guid.jpg",  AssetSpecialPurpose.NONE))
-        imageAdd(DiceImage( dating_6_guid, "dating_6_guid.jpg",  AssetSpecialPurpose.NONE))
+        imageAdd(DiceImage( dating_1_guid, "dating_1.jpg",  AssetSpecialPurpose.NONE))
+        imageAdd(DiceImage( dating_2_guid, "dating_2.jpg",  AssetSpecialPurpose.NONE))
+        imageAdd(DiceImage( dating_3_guid, "dating_3.jpg",  AssetSpecialPurpose.NONE))
+        imageAdd(DiceImage( dating_4_guid, "dating_4.jpg",  AssetSpecialPurpose.NONE))
+        imageAdd(DiceImage( dating_5_guid, "dating_5.jpg",  AssetSpecialPurpose.NONE))
+        imageAdd(DiceImage( dating_6_guid, "dating_6.jpg",  AssetSpecialPurpose.NONE))
     }
 
     fun diceListHasImageInIt(image: DiceImage): Boolean {
@@ -151,13 +160,15 @@ class ShowImagesGameController {
             pct = pct * 100.0f
             pct = 100.0f - pct
             showImagesViewModel.imageLoadPercentComplete.value = pct.toInt()
-
+            Log.d(TAG, "Image push percent complete: " + pct.toInt())
             triggerAssetDownload()
         }
     }
 
+    // Let's start send our images to the Unidice one by one
+    //
     private fun triggerAssetDownload() {
-        Log.d("Risk", "triggerAssetDownload entry")
+        Log.d(TAG, "triggerAssetDownload entry")
 
         val neededJob = getNextNeededDownload()
         if (neededJob != null) {
@@ -166,7 +177,7 @@ class ShowImagesGameController {
             downloadImageRunnable = Runnable() {
 
                 GlobalScope.launch(Dispatchers.IO) {
-                    Log.d("Risk", "triggerAssetDownload calling uploadImageToUnidice() ");
+                    Log.d(TAG, "triggerAssetDownload calling uploadImageToUnidice() ");
                     app.getUnidiceController()
                         .uploadImageToUnidice(neededJob.assetDirFilename, neededJob.guid, 240, 240,
                             neededJob.specialPurpose,
@@ -176,7 +187,7 @@ class ShowImagesGameController {
             }
             downloadImageHandler.postDelayed(downloadImageRunnable, 10)
         } else {
-            Log.d("Risk", "triggerAssetDownload: NON LEFT TO TRANSMIT");
+            Log.d(TAG, "triggerAssetDownload: NON LEFT TO TRANSMIT");
             showImagesViewModel.imageLoadComplete.value = true
         }
     }

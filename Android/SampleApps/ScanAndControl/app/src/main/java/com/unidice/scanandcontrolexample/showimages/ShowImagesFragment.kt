@@ -1,6 +1,8 @@
 package com.unidice.scanandcontrolexample.showimages
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -35,6 +37,13 @@ class ShowImagesFragment : Fragment() {
 
         showImagesViewModel = ViewModelProvider(requireActivity()).get(ShowImagesViewModel::class.java)
 
+        // This will request a fresh description of assets the Unidice
+        // has.  Your game only needs to do this once after a connection, or anytime
+        // you have deleted or added images to the Unidice.
+        //
+        // Once the asset list is done being fetched, the unidiceModel.assetDetailLoadComplete
+        // observable field will become set to true.
+        //
         binding.sendImages.setOnClickListener {
             desireSendingImagesToUnidice = true
             showBusySpinner()
@@ -45,6 +54,8 @@ class ShowImagesFragment : Fragment() {
         }
 
         // React when the Unidice completes telling us about the images it has
+        // In this game we either take no action, or we trigger a push of game
+        // images to the Unidice.
         //
         val unidiceModel = unidiceController().getModel()
         unidiceModel.assetDetailLoadComplete?.observe(viewLifecycleOwner) {
@@ -80,14 +91,29 @@ class ShowImagesFragment : Fragment() {
             onShowImageSet2()
         }
 
+        binding.eraseMyImages.setOnClickListener {
+            onEraseAllGameImages()
+        }
+
         hideBusySpinner()
         return binding.root
     }
 
     fun onImageLoadFinished() {
         hideBusySpinner()
+
+        desireSendingImagesToUnidice = false
+        // Ask the Unidice to tell us about the images it now has
+        //
+        unidiceController().queueGetAssetList()
     }
 
+    // In this game example we may have asked for the asset list with the intention
+    // of pushing game images to the Unidice once the list is done being loaded.
+    // In a real game you'd probably store desireSendingImagesToUnidice in the view model
+    // or save the value/state of desireSendingImagesToUnidice as the fragment is stopped or
+    // started.  Such details are not done in this app for simplicity and clarity.
+    //
     fun onAssetListLoadComplete() {
         if(desireSendingImagesToUnidice) {
             val gameController = (activity as MainActivity).getShowImagesGameController()
@@ -97,6 +123,8 @@ class ShowImagesFragment : Fragment() {
             } else {
                 gameController.beginImagePush(showImagesViewModel)
             }
+        } else {
+            hideBusySpinner()
         }
     }
 
@@ -120,6 +148,17 @@ class ShowImagesFragment : Fragment() {
     fun onShowImageSet2() {
         val gameController = (activity as MainActivity).getShowImagesGameController()
         gameController.showImageSet2()
+    }
+
+    fun onEraseAllGameImages() {
+        showBusySpinner()
+        unidiceController().queueEraseAllGameAssets()
+        val mainHandler = Handler(Looper.getMainLooper()).postDelayed ({
+            desireSendingImagesToUnidice = false
+            // Ask the Unidice to tell us about the images it now has
+            //
+            unidiceController().queueGetAssetList()
+        }, 5000)    //SDKTODO: monitor 'erase assets complete' message from Unidice.
     }
 
 }
