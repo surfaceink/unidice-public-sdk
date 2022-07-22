@@ -16,11 +16,10 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.unidice.scanandcontrolexample.ExampleApplication
 import com.unidice.scanandcontrolexample.R
-import com.unidice.scanandcontrolexample.scanning.ScanResultsAdapter
 import com.unidice.scanandcontrolexample.databinding.FragmentScanBinding
 import com.unidice.sdk.api.UnidiceBTManager
+import com.unidice.sdk.api.UnidiceController
 import com.unidice.sdk.api.UnidiceScanResult
-import com.unidice.sdk.internal.UnidiceControllerBase
 
 /**
  * A simple [Fragment] subclass as the second destination in the navigation.
@@ -60,7 +59,7 @@ class ScanFragment : Fragment() {
             Log.d("scan", "user has selected a Unidice to connect to")
             //viewModel.selectedBluetoothDevice.value = scanResult.device
             stopBleScan()
-            unidiceController().handleUserSelectedADevice(scanResult.macAddress)
+            unidiceController().connectToAUnidice(scanResult.macAddress)
             configureUIBasedOnState()
         }
 
@@ -101,7 +100,7 @@ class ScanFragment : Fragment() {
         }
     }
 
-    fun unidiceController() : UnidiceControllerBase {
+    fun unidiceController() : UnidiceController {
         return (requireActivity().application as ExampleApplication).getUnidiceController()
     }
 

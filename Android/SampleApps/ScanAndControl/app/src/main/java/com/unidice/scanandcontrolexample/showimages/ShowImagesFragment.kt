@@ -12,7 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.unidice.scanandcontrolexample.ExampleApplication
 import com.unidice.scanandcontrolexample.MainActivity
 import com.unidice.scanandcontrolexample.databinding.FragmentShowImagesBinding
-import com.unidice.sdk.internal.UnidiceControllerBase
+import com.unidice.sdk.api.UnidiceController
 
 // This fragment demonstates:
 // - Requesting the unidice to tell us what images it has "loading the asset list"
@@ -57,7 +57,7 @@ class ShowImagesFragment : Fragment() {
         // In this game we either take no action, or we trigger a push of game
         // images to the Unidice.
         //
-        val unidiceModel = unidiceController().getModel()
+        val unidiceModel = unidiceController().getUnidiceModel()
         unidiceModel.assetDetailLoadComplete?.observe(viewLifecycleOwner) {
             if (unidiceModel.assetDetailLoadComplete.value == true) {
                 Log.d(TAG, "completed unidice asset detail load")
@@ -128,7 +128,7 @@ class ShowImagesFragment : Fragment() {
         }
     }
 
-    fun unidiceController() : UnidiceControllerBase {
+    fun unidiceController() : UnidiceController {
         return (requireActivity().application as ExampleApplication).getUnidiceController()
     }
 

@@ -6,7 +6,6 @@ import android.util.Log
 import com.unidice.scanandcontrolexample.ExampleApplication
 import com.unidice.sdk.api.AssetSpecialPurpose
 import com.unidice.sdk.api.UnidiceController
-import com.unidice.sdk.internal.UnidiceControllerBase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -115,7 +114,7 @@ class ShowImagesGameController {
     fun doesUnidiceHaveTheImagesWeNeed(): Boolean {
         val app = ExampleApplication.applicationContext() as ExampleApplication
         val controller = app.getUnidiceController()
-        val unidiceModel = controller.getModel()
+        val unidiceModel = controller.getUnidiceModel()
 
         if (diceImageList.size == 0) {
             throw Exception("Unidice doesn't have any images?  or the asset list was not loaded from it first?")
@@ -137,7 +136,7 @@ class ShowImagesGameController {
 
         val app = ExampleApplication.applicationContext() as ExampleApplication
         val controller = app.getUnidiceController()
-        val unidiceModel = controller.getModel()
+        val unidiceModel = controller.getUnidiceModel()
 
         while (diceDownloadJobQueue.size > 0) {
             val op = diceDownloadJobQueue.remove()
@@ -179,7 +178,9 @@ class ShowImagesGameController {
                 GlobalScope.launch(Dispatchers.IO) {
                     Log.d(TAG, "triggerAssetDownload calling uploadImageToUnidice() ");
                     app.getUnidiceController()
-                        .uploadImageToUnidice(neededJob.assetDirFilename, neededJob.guid, 240, 240,
+                        .beginUploadImageToUnidiceRawJpgFileFromAssetDirectory(
+                            neededJob.assetDirFilename,
+                            neededJob.guid, 240, 240,
                             neededJob.specialPurpose,
                             ::uploadFinishedCallback)
                 }
@@ -204,55 +205,55 @@ class ShowImagesGameController {
 
     }
 
-    fun unidiceController() : UnidiceControllerBase {
+    fun unidiceController() : UnidiceController {
         val app = ExampleApplication.applicationContext() as ExampleApplication
         return app.getUnidiceController()
     }
 
     fun showImageSet1() {
         val unidiceController = unidiceController()
-        val unidiceModel = unidiceController.getModel()
+        val unidiceModel = unidiceController.getUnidiceModel()
 
         var assetId = unidiceModel.assetIDGivenGUIDOrDefault(cyberrun_1_guid, 0u)
-        unidiceController.displayAssetOnScreens(assetId, UnidiceController.UNIDICE_SCREEN_1 )
+        unidiceController.queueDisplayAssetOnScreens(assetId, UnidiceController.UNIDICE_SCREEN_1 )
 
         assetId = unidiceModel.assetIDGivenGUIDOrDefault(cyberrun_2_guid, 0u)
-        unidiceController.displayAssetOnScreens(assetId, UnidiceController.UNIDICE_SCREEN_2 )
+        unidiceController.queueDisplayAssetOnScreens(assetId, UnidiceController.UNIDICE_SCREEN_2 )
 
         assetId = unidiceModel.assetIDGivenGUIDOrDefault(cyberrun_3_guid, 0u)
-        unidiceController.displayAssetOnScreens(assetId, UnidiceController.UNIDICE_SCREEN_3 )
+        unidiceController.queueDisplayAssetOnScreens(assetId, UnidiceController.UNIDICE_SCREEN_3 )
 
         assetId = unidiceModel.assetIDGivenGUIDOrDefault(cyberrun_4_guid, 0u)
-        unidiceController.displayAssetOnScreens(assetId, UnidiceController.UNIDICE_SCREEN_4 )
+        unidiceController.queueDisplayAssetOnScreens(assetId, UnidiceController.UNIDICE_SCREEN_4 )
 
         assetId = unidiceModel.assetIDGivenGUIDOrDefault(cyberrun_5_guid, 0u)
-        unidiceController.displayAssetOnScreens(assetId, UnidiceController.UNIDICE_SCREEN_5 )
+        unidiceController.queueDisplayAssetOnScreens(assetId, UnidiceController.UNIDICE_SCREEN_5 )
 
         assetId = unidiceModel.assetIDGivenGUIDOrDefault(dating_1_guid, 0u)
-        unidiceController.displayAssetOnScreens(assetId, UnidiceController.UNIDICE_SCREEN_6 )
+        unidiceController.queueDisplayAssetOnScreens(assetId, UnidiceController.UNIDICE_SCREEN_6 )
     }
 
     fun showImageSet2() {
         val unidiceController = unidiceController()
-        val unidiceModel = unidiceController.getModel()
+        val unidiceModel = unidiceController.getUnidiceModel()
 
         var assetId = unidiceModel.assetIDGivenGUIDOrDefault(dating_1_guid, 0u)
-        unidiceController.displayAssetOnScreens(assetId, UnidiceController.UNIDICE_SCREEN_1 )
+        unidiceController.queueDisplayAssetOnScreens(assetId, UnidiceController.UNIDICE_SCREEN_1 )
 
         assetId = unidiceModel.assetIDGivenGUIDOrDefault(dating_2_guid, 0u)
-        unidiceController.displayAssetOnScreens(assetId, UnidiceController.UNIDICE_SCREEN_2 )
+        unidiceController.queueDisplayAssetOnScreens(assetId, UnidiceController.UNIDICE_SCREEN_2 )
 
         assetId = unidiceModel.assetIDGivenGUIDOrDefault(dating_3_guid, 0u)
-        unidiceController.displayAssetOnScreens(assetId, UnidiceController.UNIDICE_SCREEN_3 )
+        unidiceController.queueDisplayAssetOnScreens(assetId, UnidiceController.UNIDICE_SCREEN_3 )
 
         assetId = unidiceModel.assetIDGivenGUIDOrDefault(dating_4_guid, 0u)
-        unidiceController.displayAssetOnScreens(assetId, UnidiceController.UNIDICE_SCREEN_4 )
+        unidiceController.queueDisplayAssetOnScreens(assetId, UnidiceController.UNIDICE_SCREEN_4 )
 
         assetId = unidiceModel.assetIDGivenGUIDOrDefault(dating_5_guid, 0u)
-        unidiceController.displayAssetOnScreens(assetId, UnidiceController.UNIDICE_SCREEN_5 )
+        unidiceController.queueDisplayAssetOnScreens(assetId, UnidiceController.UNIDICE_SCREEN_5 )
 
         assetId = unidiceModel.assetIDGivenGUIDOrDefault(cyberrun_1_guid, 0u)
-        unidiceController.displayAssetOnScreens(assetId, UnidiceController.UNIDICE_SCREEN_6 )
+        unidiceController.queueDisplayAssetOnScreens(assetId, UnidiceController.UNIDICE_SCREEN_6 )
     }
 
 

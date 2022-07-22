@@ -2,15 +2,15 @@ package com.unidice.scanandcontrolexample
 
 import android.app.Application
 import android.content.Context
-import com.unidice.sdk.internal.UnidiceControllerBase
+import com.unidice.sdk.api.UnidiceController
 
 class ExampleApplication : Application() {
 
     // Manages our game's connection to the Unidice
-    private val unidiceControllerBase = UnidiceControllerBase()
+    private val unidiceController = UnidiceController()
 
-    fun getUnidiceController(): UnidiceControllerBase {
-        return unidiceControllerBase
+    fun getUnidiceController(): UnidiceController {
+        return unidiceController
     }
 
     init {
@@ -27,6 +27,6 @@ class ExampleApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        unidiceControllerBase.initController(this)
+        unidiceController.initController(this)
     }
 }
